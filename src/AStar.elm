@@ -51,7 +51,19 @@ type alias Path =
      import AStar exposing (..)
 
 
-     findPath horizontalCost movesFrom ( 0, 0 ) ( 2, 0 )
+     type World =
+         ...your custom code...
+
+
+     movesFrom : World -> Position -> Set Position
+     movesFrom world (x,y) =
+         ...your custom code...
+
+
+     findPath
+         horizontalCost
+         (movesFrom  currentWorld)
+         ( 0, 0 ) ( 2, 0 )
      --> Just [ ( 1, 0 ), ( 2, 0 ) ]
 
 
