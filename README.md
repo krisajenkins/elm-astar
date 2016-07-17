@@ -19,7 +19,7 @@ $ elm package install krisajenkins/elm-astar
 
 ## Documentation
 
-[See wikipedia](https://en.wikipedia.org/wiki/A*_search_algorithm) for a discussion of the algorithm.
+[See wikipedia for a discussion of the algorithm](https://en.wikipedia.org/wiki/A*_search_algorithm).
 [See the Elm package for full usage docs](http://package.elm-lang.org/packages/krisajenkins/elm-astar/latest).
 
 ## Building & Testing
