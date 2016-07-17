@@ -1,7 +1,6 @@
 module AStarTests exposing (tests)
 
 import AStar exposing (..)
-import Array
 import Check exposing (..)
 import Check.Producer exposing (..)
 import Check.Test exposing (evidenceToTest)
@@ -27,7 +26,7 @@ findPathTests =
     ElmTest.suite "findPath"
         [ defaultTest
             <| assertEqual (findPath horizontalCost movesFrom ( 0, 0 ) ( 2, 0 ))
-                (Just (Array.fromList [ ( 1, 0 ), ( 2, 0 ) ]))
+                (Just [ ( 1, 0 ), ( 2, 0 ) ])
         ]
 
 

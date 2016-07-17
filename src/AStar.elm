@@ -4,6 +4,7 @@ module AStar
         , Path
         , findPath
         , horizontalCost
+        , pythagoreanCost
         )
 
 {-| The A* pathfinding algorithm.
@@ -12,10 +13,10 @@ module AStar
 @docs Path
 @docs findPath
 @docs horizontalCost
+@docs pythagoreanCost
 -}
 
-import Array exposing (Array)
-import Dict exposing (Dict)
+import AStar.Generalised
 import Set exposing (Set)
 
 
@@ -25,10 +26,10 @@ type alias Position =
     ( Int, Int )
 
 
-{-| A path is an `Array` of `Position`s.
+{-| A path is a `List` of `Position`s.
 -}
 type alias Path =
-    Array Position
+    List Position
 
 
 {-| Find a path between the `start` and `end` `Position`s. You must
@@ -51,7 +52,7 @@ type alias Path =
 
 
      findPath horizontalCost movesFrom ( 0, 0 ) ( 2, 0 )
-     --> Just (Array.fromList [ ( 1, 0 ), ( 2, 0 ) ])
+     --> Just [ ( 1, 0 ), ( 2, 0 ) ]
 
 
 -}
@@ -61,9 +62,8 @@ findPath :
     -> Position
     -> Position
     -> Maybe Path
-findPath costFn moveFn start end =
-    initialModel start
-        |> astar costFn moveFn end
+findPath =
+    AStar.Generalised.findPath
 
 
 {-| A simple costing algorithm. Think of it as the number of moves a
@@ -83,111 +83,15 @@ horizontalCost ( x1, y1 ) ( x2, y2 ) =
         toFloat <| dx + dy
 
 
-type alias Model =
-    { evaluated : Set Position
-    , openSet : Set Position
-    , costs : Dict Position Float
-    , cameFrom : Dict Position Position
-    }
-
-
-initialModel : Position -> Model
-initialModel start =
-    { evaluated = Set.empty
-    , openSet = Set.singleton start
-    , costs = Dict.singleton start 0
-    , cameFrom = Dict.empty
-    }
-
-
-cheapestOpen : (Position -> Float) -> Model -> Maybe Position
-cheapestOpen costFn model =
-    model.openSet
-        |> Set.toList
-        |> List.filterMap
-            (\position ->
-                case Dict.get position model.costs of
-                    Nothing ->
-                        Nothing
-
-                    Just cost ->
-                        Just ( position, cost + costFn position )
-            )
-        |> List.sortBy snd
-        |> List.head
-        |> Maybe.map fst
-
-
-reconstructPath : Dict Position Position -> Position -> Path
-reconstructPath cameFrom goal =
-    case Dict.get goal cameFrom of
-        Nothing ->
-            Array.empty
-
-        Just next ->
-            Array.push goal
-                (reconstructPath cameFrom next)
-
-
-updateCost : Position -> Position -> Model -> Model
-updateCost current neighbour model =
+{-| An alternative costing algorithm, which calculates pythagorean distance.
+-}
+pythagoreanCost : Position -> Position -> Float
+pythagoreanCost ( x1, y1 ) ( x2, y2 ) =
     let
-        newCameFrom =
-            Dict.insert neighbour current model.cameFrom
+        dx =
+            toFloat <| abs (x1 - x2)
 
-        distanceTo =
-            reconstructPath newCameFrom neighbour
-                |> Array.length
-                |> toFloat
-
-        newModel =
-            { model
-                | costs = Dict.insert neighbour distanceTo model.costs
-                , cameFrom = newCameFrom
-            }
+        dy =
+            toFloat <| abs (y1 - y2)
     in
-        case Dict.get neighbour model.costs of
-            Nothing ->
-                newModel
-
-            Just previousDistance ->
-                if distanceTo < previousDistance then
-                    newModel
-                else
-                    model
-
-
-astar : (Position -> Position -> Float) -> (Position -> Set Position) -> Position -> Model -> Maybe Path
-astar costFn moveFn goal model =
-    case cheapestOpen (costFn goal) model of
-        Nothing ->
-            Nothing
-
-        Just current ->
-            if current == goal then
-                Just (reconstructPath model.cameFrom goal)
-            else
-                let
-                    modelPopped =
-                        { model
-                            | openSet = Set.remove current model.openSet
-                            , evaluated = Set.insert current model.evaluated
-                        }
-
-                    neighbours =
-                        moveFn current
-
-                    newNeighbours =
-                        Set.diff neighbours modelPopped.evaluated
-
-                    modelWithNeighbours =
-                        { modelPopped
-                            | openSet =
-                                Set.union modelPopped.openSet
-                                    newNeighbours
-                        }
-
-                    modelWithCosts =
-                        Set.foldl (updateCost current) modelWithNeighbours newNeighbours
-                in
-                    astar costFn moveFn goal modelWithCosts
+        abs <| (sqrt 2 * min dx dy) + abs (dy - dx)
