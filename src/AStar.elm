@@ -7,7 +7,7 @@ module AStar
         , pythagoreanCost
         )
 
-{-| The A* pathfinding algorithm.
+{-| The A-Star pathfinding algorithm.
 
 @docs Position
 @docs Path
@@ -80,7 +80,7 @@ findPath =
 
 {-| A simple costing algorithm. Think of it as the number of moves a
 rook/castle would have to make on a chessboard. Even if your piece can
-move diagonally it will still work! A* only requires that the cost
+move diagonally it will still work! A-Star only requires that the cost
 function never *under*estimates.
 -}
 straightLineCost : Position -> Position -> Float
