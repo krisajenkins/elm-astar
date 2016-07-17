@@ -62,11 +62,9 @@ type alias Path =
 
      findPath
          straightLineCost
-         (movesFrom  currentWorld)
+         (movesFrom currentWorld)
          ( 0, 0 ) ( 2, 0 )
      --> Just [ ( 1, 0 ), ( 2, 0 ) ]
-
-
 -}
 findPath :
     (Position -> Position -> Float)
