@@ -1,5 +1,7 @@
 # A* Pathfinding algorithm for Elm
 
+[![Build Status](https://travis-ci.org/krisajenkins/elm-astar.svg?branch=travis)](https://travis-ci.org/krisajenkins/elm-astar)
+
 Useful for point & click games and actual computer science.
 
 
