@@ -43,7 +43,7 @@ type alias Path =
   places you can move to in one step.
 
   If this function returns `Nothing`, there is no path between the two
-  points. Otherwise it returns `Just` an `Array` of steps from `start`
+  points. Otherwise it returns `Just` a `List` of steps from `start`
   to `end`.
 
   Example usage.
