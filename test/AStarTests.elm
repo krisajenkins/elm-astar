@@ -16,7 +16,7 @@ tests =
             << quickCheck
             <| Check.suite "all claims"
                 [ findPathClaims
-                , horizontalCostClaims
+                , straightLineCostClaims
                 ]
         ]
 
@@ -25,7 +25,7 @@ findPathTests : Test
 findPathTests =
     ElmTest.suite "findPath"
         [ defaultTest
-            <| assertEqual (findPath horizontalCost movesFrom ( 0, 0 ) ( 2, 0 ))
+            <| assertEqual (findPath straightLineCost movesFrom ( 0, 0 ) ( 2, 0 ))
                 (Just [ ( 1, 0 ), ( 2, 0 ) ])
         ]
 
@@ -35,19 +35,19 @@ findPathClaims =
     Check.suite "findPath"
         [ claim "If all moves are available, a path is always found."
             `true` (\( start, end ) ->
-                        findPath horizontalCost movesFrom start end
+                        findPath straightLineCost movesFrom start end
                             /= Nothing
                    )
-            `for` filter (\( start, end ) -> horizontalCost start end <= 25.0)
+            `for` filter (\( start, end ) -> straightLineCost start end <= 25.0)
                     (tuple ( position, position ))
         ]
 
 
-horizontalCostClaims : Claim
-horizontalCostClaims =
-    Check.suite "horizontalCost"
+straightLineCostClaims : Claim
+straightLineCostClaims =
+    Check.suite "straightLineCost"
         [ claim "Cost is always non-negative."
-            `true` (\( p1, p2 ) -> horizontalCost p1 p2 >= 0.0)
+            `true` (\( p1, p2 ) -> straightLineCost p1 p2 >= 0.0)
             `for` (tuple ( position, position ))
         ]
 

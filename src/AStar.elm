@@ -3,7 +3,7 @@ module AStar
         ( Position
         , Path
         , findPath
-        , horizontalCost
+        , straightLineCost
         , pythagoreanCost
         )
 
@@ -12,7 +12,7 @@ module AStar
 @docs Position
 @docs Path
 @docs findPath
-@docs horizontalCost
+@docs straightLineCost
 @docs pythagoreanCost
 -}
 
@@ -61,7 +61,7 @@ type alias Path =
 
 
      findPath
-         horizontalCost
+         straightLineCost
          (movesFrom  currentWorld)
          ( 0, 0 ) ( 2, 0 )
      --> Just [ ( 1, 0 ), ( 2, 0 ) ]
@@ -83,8 +83,8 @@ rook/castle would have to make on a chessboard. Even if your piece can
 move diagonally it will still work! A* only requires that the cost
 function never *under*estimates.
 -}
-horizontalCost : Position -> Position -> Float
-horizontalCost ( x1, y1 ) ( x2, y2 ) =
+straightLineCost : Position -> Position -> Float
+straightLineCost ( x1, y1 ) ( x2, y2 ) =
     let
         dx =
             abs (x1 - x2)
