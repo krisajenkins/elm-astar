@@ -1,10 +1,17 @@
 module AStar.Generalised exposing (findPath)
 
-{-| This is the real algorithm. The types are generalised here. We
-publish simple types to the user which assume they're working with a
-2D grid. Actually, we don't care what the terrain model is. Positions
-can be any type you like, as long as it's `comparable` (so that we can
-use it as a dictionary key).
+{-| This is the real algorithm. The types are generalised here.
+
+We publish simple types to the user which assume they're working with
+a 2D grid.
+
+But in reality, we aren't tied to (x,y) positions and we don't care
+what the terrain model is. Positions can be any type you like (as long
+as it's `comparable` so that we can use it as a dictionary
+key).
+
+But...that makes the type signatures pretty unintuitive to newer
+users, so we hide them away here.
 -}
 
 import Array exposing (Array)
