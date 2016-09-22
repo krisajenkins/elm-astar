@@ -83,6 +83,9 @@ updateCost current neighbour model =
         newCameFrom =
             Dict.insert neighbour current model.cameFrom
 
+        newCosts =
+            Dict.insert neighbour distanceTo model.costs
+
         distanceTo =
             reconstructPath newCameFrom neighbour
                 |> Array.length
@@ -90,7 +93,7 @@ updateCost current neighbour model =
 
         newModel =
             { model
-                | costs = Dict.insert neighbour distanceTo model.costs
+                | costs = newCosts
                 , cameFrom = newCameFrom
             }
     in
