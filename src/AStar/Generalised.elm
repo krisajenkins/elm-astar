@@ -17,6 +17,7 @@ users, so we hide them away here.
 import Array exposing (Array)
 import Dict exposing (Dict)
 import Set exposing (Set)
+import Tuple exposing (first, second)
 
 
 findPath :
@@ -61,9 +62,9 @@ cheapestOpen costFn model =
                     Just cost ->
                         Just ( position, cost + costFn position )
             )
-        |> List.sortBy snd
+        |> List.sortBy second
         |> List.head
-        |> Maybe.map fst
+        |> Maybe.map first
 
 
 reconstructPath : Dict comparable comparable -> comparable -> Array comparable

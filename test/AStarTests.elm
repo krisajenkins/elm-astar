@@ -4,7 +4,7 @@ import AStar exposing (..)
 import Check exposing (..)
 import Check.Producer exposing (..)
 import Check.Test exposing (evidenceToTest)
-import ElmTest exposing (..)
+import Legacy.ElmTest as ElmTest exposing (..)
 import Set exposing (Set)
 
 
@@ -33,22 +33,27 @@ findPathTests =
 findPathClaims : Claim
 findPathClaims =
     Check.suite "findPath"
-        [ claim "If all moves are available, a path is always found."
-            `true` (\( start, end ) ->
-                        findPath straightLineCost movesFrom start end
-                            /= Nothing
-                   )
-            `for` filter (\( start, end ) -> straightLineCost start end <= 25.0)
-                    (tuple ( position, position ))
+        [ for
+            (true (claim "If all moves are available, a path is always found.")
+                (\( start, end ) ->
+                    findPath straightLineCost movesFrom start end
+                        /= Nothing
+                )
+            )
+            (filter (\( start, end ) -> straightLineCost start end <= 25.0)
+                (tuple ( position, position ))
+            )
         ]
 
 
 straightLineCostClaims : Claim
 straightLineCostClaims =
     Check.suite "straightLineCost"
-        [ claim "Cost is always non-negative."
-            `true` (\( p1, p2 ) -> straightLineCost p1 p2 >= 0.0)
-            `for` (tuple ( position, position ))
+        [ for
+            (true (claim "Cost is always non-negative.")
+                (\( p1, p2 ) -> straightLineCost p1 p2 >= 0.0)
+            )
+            (tuple ( position, position ))
         ]
 
 

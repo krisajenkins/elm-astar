@@ -1,7 +1,7 @@
 module Test exposing (..)
 
 import AStarTests
-import ElmTest exposing (..)
+import Legacy.ElmTest exposing (..)
 
 
 tests : Test
@@ -12,6 +12,6 @@ tests =
 
 {-| Run the whole test suite.
 -}
-main : Program Never
+main : Program Never () msg
 main =
     runSuite tests
