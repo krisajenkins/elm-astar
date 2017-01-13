@@ -12,6 +12,8 @@ key).
 
 But...that makes the type signatures pretty unintuitive to newer
 users, so we hide them away here.
+
+@docs findPath
 -}
 
 import Array exposing (Array)
@@ -20,6 +22,12 @@ import Set exposing (Set)
 import Tuple exposing (first, second)
 
 
+{-| Find a path between the `start` and `end` `Position`s. You must
+  supply a cost function and a move function.
+
+See `AStar.findPath` for a getting-started guide. This is a more
+general version of that same function.
+-}
 findPath :
     (comparable -> comparable -> Float)
     -> (comparable -> Set comparable)
