@@ -37,7 +37,7 @@ type alias Path =
 
   The cost function must estimate the distance between any two
   positions. It doesn't really matter how accurate this estimate is,
-  as long as it *never* underestimates.
+  as long as it *never* overestimates.
 
   The move function takes a `Position` and returns a `Set` of possible
   places you can move to in one step.
@@ -79,7 +79,7 @@ findPath =
 {-| A simple costing algorithm. Think of it as the number of moves a
 rook/castle would have to make on a chessboard. Even if your piece can
 move diagonally it will still work! A-Star only requires that the cost
-function never *under*estimates.
+function *never* overestimates.
 -}
 straightLineCost : Position -> Position -> Float
 straightLineCost ( x1, y1 ) ( x2, y2 ) =
