@@ -1,5 +1,5 @@
 {
-    "version": "2.1.0",
+    "version": "2.1.2",
     "summary": "The A* pathfinding algorithm.",
     "repository": "https://github.com/krisajenkins/elm-astar.git",
     "license": "MIT",
