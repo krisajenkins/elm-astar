@@ -77,9 +77,7 @@ findPath =
 
 
 {-| A simple costing algorithm. Think of it as the number of moves a
-rook/castle would have to make on a chessboard. Even if your piece can
-move diagonally it will still work! A-Star only requires that the cost
-function *never* overestimates.
+rook/castle would have to make on a chessboard.
 -}
 straightLineCost : Position -> Position -> Float
 straightLineCost ( x1, y1 ) ( x2, y2 ) =
