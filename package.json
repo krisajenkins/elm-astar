@@ -1,0 +1,26 @@
+{
+  "name": "elm-astar",
+  "version": "1.0.0",
+  "description": "[![Build Status](https://travis-ci.org/krisajenkins/elm-astar.svg?branch=travis)](https://travis-ci.org/krisajenkins/elm-astar)",
+  "main": "index.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jackfranklin/elm-astar.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jackfranklin/elm-astar/issues"
+  },
+  "homepage": "https://github.com/jackfranklin/elm-astar#readme",
+  "devDependencies": {
+    "elm-test": "^0.19.0-beta8"
+  }
+}
