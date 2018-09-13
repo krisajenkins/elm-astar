@@ -14,6 +14,7 @@ But...that makes the type signatures pretty unintuitive to newer
 users, so we hide them away here.
 
 @docs findPath
+
 -}
 
 import Array exposing (Array)
@@ -23,10 +24,11 @@ import Tuple exposing (first, second)
 
 
 {-| Find a path between the `start` and `end` `Position`s. You must
-  supply a cost function and a move function.
+supply a cost function and a move function.
 
 See `AStar.findPath` for a getting-started guide. This is a more
 general version of that same function.
+
 -}
 findPath :
     (comparable -> comparable -> Float)
@@ -106,15 +108,16 @@ updateCost current neighbour model =
                 , cameFrom = newCameFrom
             }
     in
-        case Dict.get neighbour model.costs of
-            Nothing ->
+    case Dict.get neighbour model.costs of
+        Nothing ->
+            newModel
+
+        Just previousDistance ->
+            if distanceTo < previousDistance then
                 newModel
 
-            Just previousDistance ->
-                if distanceTo < previousDistance then
-                    newModel
-                else
-                    model
+            else
+                model
 
 
 astar :
@@ -131,6 +134,7 @@ astar costFn moveFn goal model =
         Just current ->
             if current == goal then
                 Just (reconstructPath model.cameFrom goal)
+
             else
                 let
                     modelPopped =
@@ -155,4 +159,4 @@ astar costFn moveFn goal model =
                     modelWithCosts =
                         Set.foldl (updateCost current) modelWithNeighbours newNeighbours
                 in
-                    astar costFn moveFn goal modelWithCosts
+                astar costFn moveFn goal modelWithCosts

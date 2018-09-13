@@ -1,11 +1,10 @@
-module AStar
-    exposing
-        ( Position
-        , Path
-        , findPath
-        , straightLineCost
-        , pythagoreanCost
-        )
+module AStar exposing
+    ( Position
+    , Path
+    , findPath
+    , straightLineCost
+    , pythagoreanCost
+    )
 
 {-| The A-Star pathfinding algorithm.
 
@@ -14,6 +13,7 @@ module AStar
 @docs findPath
 @docs straightLineCost
 @docs pythagoreanCost
+
 -}
 
 import AStar.Generalised
@@ -33,20 +33,20 @@ type alias Path =
 
 
 {-| Find a path between the `start` and `end` `Position`s. You must
-  supply a cost function and a move function.
+supply a cost function and a move function.
 
-  The cost function must estimate the distance between any two
-  positions. It doesn't really matter how accurate this estimate is,
-  as long as it *never* overestimates.
+The cost function must estimate the distance between any two
+positions. It doesn't really matter how accurate this estimate is,
+as long as it _never_ overestimates.
 
-  The move function takes a `Position` and returns a `Set` of possible
-  places you can move to in one step.
+The move function takes a `Position` and returns a `Set` of possible
+places you can move to in one step.
 
-  If this function returns `Nothing`, there is no path between the two
-  points. Otherwise it returns `Just` a `List` of steps from `start`
-  to `end`.
+If this function returns `Nothing`, there is no path between the two
+points. Otherwise it returns `Just` a `List` of steps from `start`
+to `end`.
 
-  Example usage.
+Example usage.
 
      import AStar exposing (..)
 
@@ -65,6 +65,7 @@ type alias Path =
          (movesFrom currentWorld)
          ( 0, 0 ) ( 2, 0 )
      --> Just [ ( 1, 0 ), ( 2, 0 ) ]
+
 -}
 findPath :
     (Position -> Position -> Float)
@@ -88,7 +89,7 @@ straightLineCost ( x1, y1 ) ( x2, y2 ) =
         dy =
             abs (y1 - y2)
     in
-        toFloat <| dx + dy
+    toFloat <| dx + dy
 
 
 {-| An alternative costing algorithm, which calculates pythagorean distance.
@@ -102,4 +103,4 @@ pythagoreanCost ( x1, y1 ) ( x2, y2 ) =
         dy =
             toFloat <| abs (y1 - y2)
     in
-        abs <| (sqrt 2 * min dx dy) + abs (dy - dx)
+    abs <| (sqrt 2 * min dx dy) + abs (dy - dx)
