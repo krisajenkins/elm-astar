@@ -1,4 +1,4 @@
-module AStarTests exposing (tests)
+module AStarTests exposing (suite)
 
 import AStar exposing (..)
 import Expect exposing (Expectation)
@@ -7,8 +7,8 @@ import Set exposing (Set)
 import Test exposing (..)
 
 
-tests : Test
-tests =
+suite : Test
+suite =
     describe "AStar"
         [ findPathTests
         , findPathFuzzTests
