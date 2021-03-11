@@ -24,7 +24,7 @@ import Tuple exposing (first, second)
 
 
 {-| Find a path between the `start` and `end` `Position`s. You must
-supply a cost function and a move function.
+supply a neighbour cost function, a heuristic function and a move function.
 
 See `AStar.findPath` for a getting-started guide. This is a more
 general version of that same function.
@@ -32,13 +32,14 @@ general version of that same function.
 -}
 findPath :
     (comparable -> comparable -> Float)
+    -> (comparable -> comparable -> Float)
     -> (comparable -> Set comparable)
     -> comparable
     -> comparable
     -> Maybe (List comparable)
-findPath costFn moveFn start end =
+findPath neighbourCostFn heuristicFn moveFn start end =
     initialModel start
-        |> astar costFn moveFn end
+        |> astar neighbourCostFn heuristicFn moveFn end
         |> Maybe.map Array.toList
 
 
@@ -60,7 +61,7 @@ initialModel start =
 
 
 cheapestOpen : (comparable -> Float) -> Model comparable -> Maybe comparable
-cheapestOpen costFn model =
+cheapestOpen heuristicFn model =
     model.openSet
         |> Set.toList
         |> List.filterMap
@@ -70,7 +71,7 @@ cheapestOpen costFn model =
                         Nothing
 
                     Just cost ->
-                        Just ( position, cost + costFn position )
+                        Just ( position, cost + heuristicFn position )
             )
         |> List.sortBy second
         |> List.head
@@ -88,8 +89,8 @@ reconstructPath cameFrom goal =
                 (reconstructPath cameFrom next)
 
 
-updateCost : comparable -> comparable -> Model comparable -> Model comparable
-updateCost current neighbour model =
+updateCost : (comparable -> comparable -> Float) -> comparable -> comparable -> Model comparable -> Model comparable
+updateCost neighbourCostFn current neighbour model =
     let
         newCameFrom =
             Dict.insert neighbour current model.cameFrom
@@ -98,9 +99,11 @@ updateCost current neighbour model =
             Dict.insert neighbour distanceTo model.costs
 
         distanceTo =
-            reconstructPath newCameFrom neighbour
-                |> Array.length
-                |> toFloat
+            neighbourCostFn current neighbour
+                + (reconstructPath newCameFrom neighbour
+                    |> Array.length
+                    |> toFloat
+                  )
 
         newModel =
             { model
@@ -122,12 +125,13 @@ updateCost current neighbour model =
 
 astar :
     (comparable -> comparable -> Float)
+    -> (comparable -> comparable -> Float)
     -> (comparable -> Set comparable)
     -> comparable
     -> Model comparable
     -> Maybe (Array comparable)
-astar costFn moveFn goal model =
-    case cheapestOpen (costFn goal) model of
+astar neighbourCostFn heuristicFn moveFn goal model =
+    case cheapestOpen (heuristicFn goal) model of
         Nothing ->
             Nothing
 
@@ -157,6 +161,6 @@ astar costFn moveFn goal model =
                         }
 
                     modelWithCosts =
-                        Set.foldl (updateCost current) modelWithNeighbours newNeighbours
+                        Set.foldl (updateCost neighbourCostFn current) modelWithNeighbours newNeighbours
                 in
-                astar costFn moveFn goal modelWithCosts
+                astar neighbourCostFn heuristicFn moveFn goal modelWithCosts

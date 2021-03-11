@@ -12,7 +12,7 @@ suite =
     describe "AStar"
         [ findPathTests
         , findPathFuzzTests
-        , straightLineCostFuzzTests
+        , straightLineHeuristicFuzzTests
         ]
 
 
@@ -21,8 +21,29 @@ findPathTests =
     describe "findPath"
         [ test "it finds a path" <|
             \() ->
-                findPath straightLineCost movesFrom ( 0, 0 ) ( 2, 0 )
+                findPath
+                    constantNeighbourCost
+                    straightLineHeuristic
+                    movesFrom
+                    ( 0, 0 )
+                    ( 2, 0 )
                     |> Expect.equal (Just [ ( 1, 0 ), ( 2, 0 ) ])
+        , test "it finds the optimal path given non-uniform terrain" <|
+            \() ->
+                findPath
+                    mountainMapNeighbourCost
+                    straightLineHeuristic
+                    movesFrom
+                    ( 2, 0 )
+                    ( 2, 2 )
+                    |> Expect.equal
+                        (Just
+                            [ ( 1, 0 )
+                            , ( 0, 1 )
+                            , ( 1, 2 )
+                            , ( 2, 2 )
+                            ]
+                        )
         ]
 
 
@@ -34,19 +55,24 @@ findPathFuzzTests =
                 positions
                     |> List.map
                         (\( start, end ) ->
-                            findPath straightLineCost movesFrom start end
+                            findPath
+                                constantNeighbourCost
+                                straightLineHeuristic
+                                movesFrom
+                                start
+                                end
                         )
                     |> List.all (\x -> x /= Nothing)
                     |> Expect.equal True
         ]
 
 
-straightLineCostFuzzTests : Test
-straightLineCostFuzzTests =
-    describe "straightLineCostFuzzTests"
+straightLineHeuristicFuzzTests : Test
+straightLineHeuristicFuzzTests =
+    describe "straightLineHeuristicFuzzTests"
         [ fuzz tupleOfPositions "cost is always non-negative" <|
             \( start, end ) ->
-                straightLineCost start end |> Expect.atLeast 0.0
+                straightLineHeuristic start end |> Expect.atLeast 0.0
         ]
 
 
@@ -64,7 +90,7 @@ listOfPositionsWithLowCost =
 listOfPositionsWithCost : Fuzzer (List ( ( Position, Position ), Float ))
 listOfPositionsWithCost =
     listOfPositionTuples
-        |> map (List.map (\pos -> ( pos, straightLineCost (Tuple.first pos) (Tuple.second pos) )))
+        |> map (List.map (\pos -> ( pos, straightLineHeuristic (Tuple.first pos) (Tuple.second pos) )))
 
 
 listOfPositionTuples : Fuzzer (List ( Position, Position ))
@@ -94,3 +120,35 @@ movesFrom ( x, y ) =
         , ( x + 1, y - 1 )
         , ( x + 1, y + 1 )
         ]
+
+
+{-|
+
+    - = highway (cost 1)
+    M = mountain (cost 9)
+    S = start (also, highway)
+    T = target (also, highway)
+
+    - - S - - -
+    - M M M M M
+    - - T - - -
+
+-}
+mountains : Set Position
+mountains =
+    Set.fromList
+        [ ( 1, 1 )
+        , ( 2, 1 )
+        , ( 3, 1 )
+        , ( 4, 1 )
+        , ( 5, 1 )
+        ]
+
+
+mountainMapNeighbourCost : Position -> Position -> Float
+mountainMapNeighbourCost from to =
+    if Set.member to mountains then
+        9
+
+    else
+        1

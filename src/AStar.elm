@@ -2,8 +2,9 @@ module AStar exposing
     ( Position
     , Path
     , findPath
-    , straightLineCost
-    , pythagoreanCost
+    , constantNeighbourCost
+    , straightLineHeuristic
+    , pythagoreanHeuristic
     )
 
 {-| The A-Star pathfinding algorithm.
@@ -11,8 +12,9 @@ module AStar exposing
 @docs Position
 @docs Path
 @docs findPath
-@docs straightLineCost
-@docs pythagoreanCost
+@docs constantNeighbourCost
+@docs straightLineHeuristic
+@docs pythagoreanHeuristic
 
 -}
 
@@ -35,7 +37,13 @@ type alias Path =
 {-| Find a path between the `start` and `end` `Position`s. You must
 supply a cost function and a move function.
 
-The cost function must estimate the distance between any two
+The neighbour cost function allows you to introduce eg. different
+terrains: the cost of moving to a highway might be 1, while the cost
+of moving to the mountains might be 3. The algorithm will then take
+that into account and find an optimal path (circling around the
+mountain might be faster than trekking it in a straight line).
+
+The heuristic function must estimate the distance between any two
 positions. It doesn't really matter how accurate this estimate is,
 as long as it _never_ overestimates.
 
@@ -60,8 +68,15 @@ Example usage.
          ...your custom code...
 
 
+     neighbourCost : Position -> Position -> Float
+     neighbourCost from to =
+         -- opting out of the terrain cost calculation
+         0
+
+
      findPath
-         straightLineCost
+         neighbourCost
+         straightLineHeuristic
          (movesFrom currentWorld)
          ( 0, 0 ) ( 2, 0 )
      --> Just [ ( 1, 0 ), ( 2, 0 ) ]
@@ -69,6 +84,7 @@ Example usage.
 -}
 findPath :
     (Position -> Position -> Float)
+    -> (Position -> Position -> Float)
     -> (Position -> Set Position)
     -> Position
     -> Position
@@ -77,11 +93,19 @@ findPath =
     AStar.Generalised.findPath
 
 
-{-| A simple costing algorithm. Think of it as the number of moves a
+{-| A neighbour cost function that always returns 0. Handy when all
+neighbouring tiles have the same movement cost between them.
+-}
+constantNeighbourCost : Position -> Position -> Float
+constantNeighbourCost _ _ =
+    0
+
+
+{-| A simple heuristic algorithm. Think of it as the number of moves a
 rook/castle would have to make on a chessboard.
 -}
-straightLineCost : Position -> Position -> Float
-straightLineCost ( x1, y1 ) ( x2, y2 ) =
+straightLineHeuristic : Position -> Position -> Float
+straightLineHeuristic ( x1, y1 ) ( x2, y2 ) =
     let
         dx =
             abs (x1 - x2)
@@ -92,10 +116,10 @@ straightLineCost ( x1, y1 ) ( x2, y2 ) =
     toFloat <| dx + dy
 
 
-{-| An alternative costing algorithm, which calculates pythagorean distance.
+{-| An alternative heuristic algorithm, which calculates pythagorean distance.
 -}
-pythagoreanCost : Position -> Position -> Float
-pythagoreanCost ( x1, y1 ) ( x2, y2 ) =
+pythagoreanHeuristic : Position -> Position -> Float
+pythagoreanHeuristic ( x1, y1 ) ( x2, y2 ) =
     let
         dx =
             toFloat <| abs (x1 - x2)
